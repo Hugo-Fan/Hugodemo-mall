@@ -1,5 +1,6 @@
 package com.hugo.hugodemomall.service.impl;
 
+import com.hugo.hugodemomall.constant.ProductCategory;
 import com.hugo.hugodemomall.dao.ProductDao;
 import com.hugo.hugodemomall.dto.ProductRequest;
 import com.hugo.hugodemomall.model.Product;
@@ -17,8 +18,8 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category,String search) {
+        return productDao.getProducts(category,search);
     }
 
     @Override
