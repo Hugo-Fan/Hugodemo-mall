@@ -1,6 +1,7 @@
 package com.hugo.hugodemomall.controller;
 
 import com.hugo.hugodemomall.constant.ProductCategory;
+import com.hugo.hugodemomall.dto.ProductQueryParams;
 import com.hugo.hugodemomall.dto.ProductRequest;
 import com.hugo.hugodemomall.model.Product;
 import com.hugo.hugodemomall.service.ProductService;
@@ -22,7 +23,11 @@ public class ProductController {
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search
     ) {
-        List<Product> productList = productService.getProducts(category,search);
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
