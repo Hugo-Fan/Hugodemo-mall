@@ -23,6 +23,30 @@ public class ProductDaoImp implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String sql = """
+                SELECT COUNT(*)
+                FROM product
+                WHERE 1=1
+                """;
+        Map<String, Object> map = new HashMap<>();
+
+        if(productQueryParams.getCategory() !=null){
+            sql += " AND category = :category";
+            map.put("category",productQueryParams.getCategory().name()); // 記得使用.name轉成String
+        }
+
+        if(productQueryParams.getSearch() !=null){
+            sql += " AND product_name LIKE :search ";
+            map.put("search","%" + productQueryParams.getSearch() + "%");
+        }
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
+    }
+
+    @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {
         // 查詢條件
         String sql = """
@@ -31,6 +55,8 @@ public class ProductDaoImp implements ProductDao {
                 WHERE 1=1
                 
                 """;
+
+        // 查詢條件
         Map<String, Object> map = new HashMap<>();
 
         if(productQueryParams.getCategory() !=null){
