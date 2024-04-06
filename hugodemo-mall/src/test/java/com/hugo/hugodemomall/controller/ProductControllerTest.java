@@ -38,7 +38,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.productName", equalTo("蘋果（澳洲）")))
                 .andExpect(jsonPath("$.category", equalTo("FOOD")))
                 .andExpect(jsonPath("$.imageUrl", notNullValue()))
-                .andExpect(jsonPath("$.price", notNullValue()))
+                .andExpect(jsonPath("$.price",equalTo(30)))
                 .andExpect(jsonPath("$.stock", notNullValue()))
                 .andExpect(jsonPath("$.description", notNullValue()))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
@@ -74,6 +74,7 @@ public class ProductControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
+                .andDo(print())
                 .andExpect(jsonPath("$.productName", equalTo("test food product")))
                 .andExpect(jsonPath("$.category", equalTo("FOOD")))
                 .andExpect(jsonPath("$.imageUrl", equalTo("http://test.com")))
