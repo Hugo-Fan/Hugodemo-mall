@@ -13,8 +13,8 @@ public class UserRowMapper implements RowMapper<User> {
         user.setUserId(rs.getInt("user_id"));
         user.setEmail(rs.getString("email"));
         user.setPassword(rs.getString("password"));
-        user.setCreated_date(rs.getDate("created_date"));
-        user.setLast_modified_date(rs.getDate("last_modified_date"));
+        user.setCreated_date(rs.getTimestamp("created_date"));
+        user.setLast_modified_date(rs.getTimestamp("last_modified_date"));
         return user;
     }
 }

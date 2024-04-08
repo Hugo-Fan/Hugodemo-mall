@@ -1,6 +1,7 @@
 package com.hugo.hugodemomall.controller;
 
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
+import com.hugo.hugodemomall.model.Order;
 import com.hugo.hugodemomall.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,9 @@ public class OrderController {
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest){
        Integer orderId = orderService.createOrder(userId,createOrderRequest);
 
-       return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+       Order order = orderService.getOrderById(orderId);
+
+       return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
 }

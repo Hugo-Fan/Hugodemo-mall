@@ -4,6 +4,7 @@ import com.hugo.hugodemomall.dao.OrderDao;
 import com.hugo.hugodemomall.dao.ProductDao;
 import com.hugo.hugodemomall.dto.BuyItem;
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
+import com.hugo.hugodemomall.model.Order;
 import com.hugo.hugodemomall.model.OrderItem;
 import com.hugo.hugodemomall.model.Product;
 import com.hugo.hugodemomall.service.OrderService;
@@ -21,6 +22,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        order.setOrderItemList(orderItemList);
+        return order;
+    }
+
     @Transactional
     @Override
     public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
