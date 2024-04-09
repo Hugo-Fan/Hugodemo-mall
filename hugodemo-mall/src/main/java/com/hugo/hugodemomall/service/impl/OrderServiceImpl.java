@@ -5,6 +5,7 @@ import com.hugo.hugodemomall.dao.ProductDao;
 import com.hugo.hugodemomall.dao.UserDao;
 import com.hugo.hugodemomall.dto.BuyItem;
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
+import com.hugo.hugodemomall.dto.OrderQueryParams;
 import com.hugo.hugodemomall.model.Order;
 import com.hugo.hugodemomall.model.OrderItem;
 import com.hugo.hugodemomall.model.Product;
@@ -34,6 +35,25 @@ public class OrderServiceImpl implements OrderService {
     private UserDao userDao;
 
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+
+        for (Order order:orderList){
+            List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+
+            order.setOrderItemList(orderItemList);
+        }
+
+        return orderList;
+    }
+
     @Override
     public Order getOrderById(Integer orderId) {
         Order order = orderDao.getOrderById(orderId);
