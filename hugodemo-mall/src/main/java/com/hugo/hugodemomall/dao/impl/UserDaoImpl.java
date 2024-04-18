@@ -3,7 +3,9 @@ package com.hugo.hugodemomall.dao.impl;
 import com.hugo.hugodemomall.dao.UserDao;
 import com.hugo.hugodemomall.dto.UserRegisterRequest;
 import com.hugo.hugodemomall.model.User;
+import com.hugo.hugodemomall.model.UserRoles;
 import com.hugo.hugodemomall.rowmapper.UserRowMapper;
+import com.hugo.hugodemomall.rowmapper.userRolesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -78,5 +80,23 @@ public class UserDaoImpl implements UserDao {
         int  userId = keyHolder.getKey().intValue();
 
         return userId;
+    }
+
+    @Override
+    public UserRoles getUserByRole(Integer userId) {
+        String sql = """
+                    SElECT user_id,role_id
+                    FROM user_roles
+                    WHERE user_id =:userId
+                """;
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",userId);
+        List<UserRoles> userRolesList = namedParameterJdbcTemplate.query(sql, map, new userRolesRowMapper());
+
+        if(userRolesList.size()>0){
+            return userRolesList.get(0);
+        }else {
+            return null;
+        }
     }
 }

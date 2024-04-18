@@ -9,6 +9,7 @@ import com.hugo.hugodemomall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/products")
+    @GetMapping("/products/gets")
     public ResponseEntity<Page<Product>> getProducts(
             // 查詢
             @RequestParam(required = false) ProductCategory category,
@@ -63,7 +64,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/products/get/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
         Product product = productService.getProductById(productId);
 
@@ -74,16 +75,18 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/products")
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
-        Integer productId = productService.createProduct(productRequest);
+    @PostMapping("/products/create/{userId}")
+    public ResponseEntity<Product> createProduct(
+            @PathVariable Integer userId,
+            @RequestBody @Valid ProductRequest productRequest) {
+        Integer productId = productService.createProduct(userId,productRequest);
 
         Product product = productService.getProductById(productId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
-    @PutMapping("/products/{productId}")
+    @PutMapping("/products/update/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
         // 檢查商品是否存在
@@ -100,7 +103,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
     }
 
-    @DeleteMapping("/products/{productsId}")
+    @DeleteMapping("/products/delete/{productsId}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer productsId) {
         productService.deleteProductById(productsId);
 

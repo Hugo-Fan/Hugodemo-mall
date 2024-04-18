@@ -14,7 +14,7 @@ public interface ProductService {
 
     Product getProductById(Integer productId);
 
-    Integer createProduct(ProductRequest productRequest);
+    Integer createProduct(Integer userId,ProductRequest productRequest);
 
     void updateProduct(Integer productId,ProductRequest productRequest);
 

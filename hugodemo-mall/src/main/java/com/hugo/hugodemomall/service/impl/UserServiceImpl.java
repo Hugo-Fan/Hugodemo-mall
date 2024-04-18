@@ -27,6 +27,12 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userDao.getUserByEmail(email);
+    }
+
     // 註冊
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
