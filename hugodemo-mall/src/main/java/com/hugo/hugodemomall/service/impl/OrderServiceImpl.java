@@ -1,15 +1,10 @@
 package com.hugo.hugodemomall.service.impl;
 
-import com.hugo.hugodemomall.dao.OrderDao;
-import com.hugo.hugodemomall.dao.ProductDao;
-import com.hugo.hugodemomall.dao.UserDao;
+import com.hugo.hugodemomall.dao.*;
 import com.hugo.hugodemomall.dto.BuyItem;
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
 import com.hugo.hugodemomall.dto.OrderQueryParams;
-import com.hugo.hugodemomall.model.Order;
-import com.hugo.hugodemomall.model.OrderItem;
-import com.hugo.hugodemomall.model.Product;
-import com.hugo.hugodemomall.model.User;
+import com.hugo.hugodemomall.model.*;
 import com.hugo.hugodemomall.service.OrderService;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +28,13 @@ public class OrderServiceImpl implements OrderService {
     private ProductDao productDao;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private RoleDao roleDao;
+    @Autowired
+    private MemberDao memberDao;
+
+
+    private Integer vipUpgradePrice = 10000;
 
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -108,6 +110,20 @@ public class OrderServiceImpl implements OrderService {
         Integer orderId = orderDao.createOrder(userId,totalAmount);
 
         orderDao.createrOrderItems(orderId,orderItemList);
+
+        // 檢查訂單總金額有沒有超過升級VIP的金額(一萬)
+        Integer priceTotal = orderDao.getOrderByTotalPrice(userId);
+
+        // 查詢VIP role權限ID
+        Role normalRole = roleDao.getRoleByName("ROLE_VIP_MEMBER");
+
+        // 查詢會員是否已經有VIP資格
+        MemberHasRole memberHasRole = memberDao.getMemberHasRoleByMemberId(userId,normalRole.getRoleId());
+
+        // 滿足金額和目前VIP的話添加VIP權限
+        if(priceTotal>=vipUpgradePrice && memberHasRole ==null){
+            memberDao.addRoleForMemberId(userId,normalRole);
+        }
 
         return orderId;
     }

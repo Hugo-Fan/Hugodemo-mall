@@ -86,6 +86,25 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public Integer getOrderByTotalPrice(Integer userId) {
+        String sql = """
+                SELECT Sum(total_amount)
+                FROM `order`
+                WHERE user_id = :userId
+                """;
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",userId);
+
+        Integer priceTotal = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        if(priceTotal >= 0){
+            return priceTotal;
+        }else {
+            return null;
+        }
+    }
+
+    @Override
     public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
         String sql = """
                     SELECT oi.order_item_id,oi.order_id,oi.product_id,oi.quantity,oi.amount,p.product_name,p.image_url
