@@ -253,4 +253,56 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
 
+
+    // 刪除訂單
+    @Transactional
+    @Test
+    public void deleteOrders_success() throws Exception{
+        // 測試刪除
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/users/orders/{orderId}",2)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(204));
+    }
+
+    // 刪除訂單_不存在的訂單
+    @Transactional
+    @Test
+    public void deleteOrders_orderIdNotExist() throws Exception{
+        // 測試刪除不存在的訂單
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/users/orders/{orderId}",100)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(400));
+    }
+
+    // 刪除訂單_商品被誤刪除
+    @Transactional
+    @Test
+    public void deleteOrders_productNotExist() throws Exception{
+        // 故意刪除一個商品
+        RequestBuilder deleteProduct = MockMvcRequestBuilders
+                .delete("/products/delete/{productId}", 7)
+                .with(httpBasic("admin@gmail.com","admin"))
+                .with(csrf());
+
+        mockMvc.perform(deleteProduct)
+                .andExpect(status().is(204));
+
+
+        // 測試刪除
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/users/orders/{orderId}",2)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(400));
+    }
 }

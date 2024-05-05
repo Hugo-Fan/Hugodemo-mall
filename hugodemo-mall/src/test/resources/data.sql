@@ -30,5 +30,5 @@ INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (1, 2, 2,
 INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (1, 5, 1, 500000);
 
 INSERT INTO `order` (user_id, total_amount, created_date, last_modified_date) VALUES (1, 100000, '2022-06-30 12:03:00', '2022-06-30 12:03:00');
-INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (2, 4, 1, 100000);
+INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (2, 7, 1, 100000);
 

@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
             // 查詢原商品數量
             Product product = productDao.getProductById(orderItem.getProductId());
             if(product == null){
-                log.warn("找不到此商品 {},ProductId: {}",product.getProductName(),product.getProductId());
+                log.warn("找不到此商品 {},ProductId: {}",orderItem.getProductName(),orderItem.getProductId());
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
             // 添加商品數量回去回去

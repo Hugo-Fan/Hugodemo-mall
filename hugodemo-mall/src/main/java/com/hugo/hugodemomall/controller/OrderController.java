@@ -63,7 +63,6 @@ public class OrderController {
 
     @DeleteMapping("/users/orders/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable Integer orderId){
-        System.out.println("test");
         orderService.deleteOrderById(orderId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
