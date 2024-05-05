@@ -21,13 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderDao orderDao;
     @Autowired
     private ProductDao productDao;
-    @Autowired
-    private UserDao userDao;
+//    @Autowired
+//    private UserDao userDao;
     @Autowired
     private RoleDao roleDao;
     @Autowired
@@ -36,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Integer vipUpgradePrice = 10000;
 
-    private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+//    private final static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Override
     public Integer countOrder(OrderQueryParams orderQueryParams) {
@@ -69,10 +70,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
-        // 檢查user 是否存在
-        User user = userDao.getUserById(userId);
 
-        if(user ==null){
+
+        // 檢查user 是否存在
+        Member member = memberDao.getMemberById(userId);
+
+        if(member ==null){
             log.warn("不存在的 {} userId",userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -126,5 +129,34 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return orderId;
+    }
+
+    @Transactional
+    @Override
+    public void deleteOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+        if(order==null){
+            log.warn("沒有此訂單ID {}",orderId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        // 查詢order明細
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        // 刪除order和orderItem
+        orderDao.deleteOrderById(orderId);
+        orderDao.deleteOrderItemsByOrderId(orderId);
+
+        // 將刪除訂單的商品加回庫存
+        for(OrderItem orderItem:orderItemList){
+            // 查詢原商品數量
+            Product product = productDao.getProductById(orderItem.getProductId());
+            if(product == null){
+                log.warn("找不到此商品 {},ProductId: {}",product.getProductName(),product.getProductId());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+            // 添加商品數量回去回去
+            productDao.updateStock(orderItem.getProductId(),product.getStock()+orderItem.getQuantity());
+        }
     }
 }
