@@ -3,13 +3,13 @@ package com.hugo.hugodemomall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hugo.hugodemomall.constant.ProductCategory;
 import com.hugo.hugodemomall.dao.MemberDao;
-import com.hugo.hugodemomall.dto.MemberRegisterRequest;
-import com.hugo.hugodemomall.dto.ProductRequest;
+import com.hugo.hugodemomall.dto.*;
 import com.hugo.hugodemomall.model.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -181,16 +181,24 @@ class MemberControllerTest {
 
     // 申請商戶
     @Test
+    @Transactional
     public void createMerchant_success() throws Exception {
+        CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest();
+        createMerchantRequest.setMemberId(1);
+
+        String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant/{memberId}", 1)
+                .post("/members/createmerchant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(memberJson)
                 .with(httpBasic("admin@gmail.com", "admin"))
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
-                .andExpect(jsonPath("$.memberId", equalTo(1)))
                 .andExpect(jsonPath("$.memberHasRoleId", notNullValue()))
+                .andExpect(jsonPath("$.memberId",equalTo(1)))
                 .andExpect(jsonPath("$.roleId", notNullValue()));
 
         // 測試能不能添加商品
@@ -227,8 +235,15 @@ class MemberControllerTest {
     // 申請商戶操作的帳戶權限不夠
     @Test
     public void createMerchant_InsufficientPermissions() throws Exception {
+        CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest();
+        createMerchantRequest.setMemberId(1);
+
+        String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant/{memberId}", 1)
+                .post("/members/createmerchant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(memberJson)
                 .with(httpBasic("user1@gmail.com", "user1"))
                 .with(csrf());
 
@@ -239,9 +254,17 @@ class MemberControllerTest {
 
     // 申請商戶的memberId不存在
     @Test
+    @Transactional
     public void createMerchant_memberIdNotExist() throws Exception {
+        CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest();
+        createMerchantRequest.setMemberId(100);
+
+        String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant/{memberId}", 3)
+                .post("/members/createmerchant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(memberJson)
                 .with(httpBasic("admin@gmail.com", "admin"))
                 .with(csrf());
 
@@ -250,6 +273,76 @@ class MemberControllerTest {
 
     }
 
+    // 更新member資料
+    @Transactional
+    @Test
+    public void updateMember_success() throws Exception{
+        MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest();
+        memberUpdateRequest.setEmail("user1@gmail.com");
+        memberUpdateRequest.setName("test");
+        memberUpdateRequest.setAge(18);
+
+        String json = objectMapper.writeValueAsString(memberUpdateRequest);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/members/{memberId}",1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(200))
+                .andDo(print())
+                .andExpect(jsonPath("$.memberId",notNullValue()))
+                .andExpect(jsonPath("$.email",equalTo(memberUpdateRequest.getEmail())))
+                .andExpect(jsonPath("$.name",notNullValue()))
+                .andExpect(jsonPath("$.age",notNullValue()))
+                .andExpect(jsonPath("$.created_date",notNullValue()))
+                .andExpect(jsonPath("$.last_modified_date",notNullValue()));
+    }
+
+    // 更新member資料_帶入不同會員Email
+    @Test
+    public void updateMember_EmailError() throws Exception{
+        MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest();
+        memberUpdateRequest.setEmail("admin@gmail.com");
+        memberUpdateRequest.setName("test");
+        memberUpdateRequest.setAge(18);
+
+        String json = objectMapper.writeValueAsString(memberUpdateRequest);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/members/{memberId}",1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(404));
+    }
+
+    // 更新member資料_不存在的memberId
+    @Test
+    public void updateMember_memberIdNotExist() throws Exception{
+        MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest();
+        memberUpdateRequest.setEmail("user1@gmail.com");
+        memberUpdateRequest.setName("test");
+        memberUpdateRequest.setAge(18);
+
+        String json = objectMapper.writeValueAsString(memberUpdateRequest);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/members/{memberId}",10000)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(404));
+    }
 
     private void register(MemberRegisterRequest memberRegisterRequest) throws Exception {
         String json = objectMapper.writeValueAsString(memberRegisterRequest);
