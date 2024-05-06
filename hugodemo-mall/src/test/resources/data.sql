@@ -24,11 +24,11 @@ INSERT INTO member_has_role (member_id, role_id) VALUES (2, 1);
 
 
 -- order, order_item
-INSERT INTO `order` (user_id, total_amount, created_date, last_modified_date) VALUES (1, 500690, '2022-06-30 11:10:00', '2022-06-30 11:10:00');
+INSERT INTO `order` (member_id, total_amount, created_date, last_modified_date) VALUES (1, 500690, '2022-06-30 11:10:00', '2022-06-30 11:10:00');
 INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (1, 1, 3, 90);
 INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (1, 2, 2, 600);
 INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (1, 5, 1, 500000);
 
-INSERT INTO `order` (user_id, total_amount, created_date, last_modified_date) VALUES (1, 100000, '2022-06-30 12:03:00', '2022-06-30 12:03:00');
+INSERT INTO `order` (member_id, total_amount, created_date, last_modified_date) VALUES (1, 100000, '2022-06-30 12:03:00', '2022-06-30 12:03:00');
 INSERT INTO order_item (order_id, product_id, quantity, amount) VALUES (2, 7, 1, 100000);
 

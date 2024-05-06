@@ -43,12 +43,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Integer createProduct(Integer userId,ProductRequest productRequest) {
+    public Integer createProduct(Integer memberId,ProductRequest productRequest) {
 
-        Member member = memberDao.getMemberById(userId);
+        Member member = memberDao.getMemberById(memberId);
 
         if(member ==null){
-            log.warn("不存在的 {} userId",userId);
+            log.warn("不存在的 {} memberId",memberId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 

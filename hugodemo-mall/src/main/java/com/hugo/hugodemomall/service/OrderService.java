@@ -13,7 +13,7 @@ public interface OrderService {
     List<Order> getOrders(OrderQueryParams orderQueryParams);
 
     Order getOrderById(Integer orderId);
-    Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest);
+    Integer createOrder(Integer memberId, CreateOrderRequest createOrderRequest);
 
     void deleteOrderById(Integer orderId);
 }

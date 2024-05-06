@@ -12,8 +12,8 @@ public interface OrderDao {
     List<Order> getOrders(OrderQueryParams orderQueryParams);
     Order getOrderById(Integer orderId);
     List<OrderItem> getOrderItemsByOrderId(Integer orderId);
-    Integer createOrder(Integer userId, Integer totalAmount);
-    Integer getOrderByTotalPrice (Integer userId);
+    Integer createOrder(Integer memberId, Integer totalAmount);
+    Integer getOrderByTotalPrice (Integer memberId);
 
     void  createrOrderItems(Integer orderId, List<OrderItem> orderItemList);
 

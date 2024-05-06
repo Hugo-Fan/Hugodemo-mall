@@ -75,11 +75,11 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/products/create/{userId}")
+    @PostMapping("/products/create/{memberId}")
     public ResponseEntity<Product> createProduct(
-            @PathVariable Integer userId,
+            @PathVariable Integer memberId,
             @RequestBody @Valid ProductRequest productRequest) {
-        Integer productId = productService.createProduct(userId,productRequest);
+        Integer productId = productService.createProduct(memberId,productRequest);
 
         Product product = productService.getProductById(productId);
 

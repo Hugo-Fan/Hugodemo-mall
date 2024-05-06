@@ -9,7 +9,7 @@ import java.util.List;
 public class Order {
 
     private Integer orderId;
-    private Integer userId;
+    private Integer memberId;
     private Integer totalAmount;
     private Date createdDate;
     private Date lastModifiedDate;

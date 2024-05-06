@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS member_has_role
 CREATE TABLE IF NOT EXISTS `order`
 (
     order_id           INT       NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_id            INT       NOT NULL,
+    member_id            INT       NOT NULL,
     total_amount       INT       NOT NULL,
     created_date       TIMESTAMP NOT NULL,
     last_modified_date TIMESTAMP NOT NULL

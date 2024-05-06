@@ -22,14 +22,14 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
-    @GetMapping("/users/{userId}/orders")
+    @GetMapping("/members/{memberId}/orders")
     public ResponseEntity<Page<Order>> getOrders(
-            @PathVariable Integer userId,
+            @PathVariable Integer memberId,
             @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer limit,
             @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ){
         OrderQueryParams orderQueryParams = new OrderQueryParams();
-        orderQueryParams.setUserId(userId);
+        orderQueryParams.setMemberId(memberId);
         orderQueryParams.setLimit(limit);
         orderQueryParams.setOffset(offset);
 
@@ -51,19 +51,19 @@ public class OrderController {
     }
 
 
-    @PostMapping("/users/{userId}/add/orders")
-    public ResponseEntity<?> createOrder(@PathVariable Integer userId,
+    @PostMapping("/members/{memberId}/add/orders")
+    public ResponseEntity<?> createOrder(@PathVariable Integer memberId,
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest){
-       Integer orderId = orderService.createOrder(userId,createOrderRequest);
+       Integer orderId = orderService.createOrder(memberId,createOrderRequest);
 
        Order order = orderService.getOrderById(orderId);
 
        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
-    @DeleteMapping("/users/orders/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Integer orderId){
-        orderService.deleteOrderById(orderId);
+    @DeleteMapping("/members/orders/{memberId}")
+    public ResponseEntity<?> deleteOrder(@PathVariable Integer memberId){
+        orderService.deleteOrderById(memberId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

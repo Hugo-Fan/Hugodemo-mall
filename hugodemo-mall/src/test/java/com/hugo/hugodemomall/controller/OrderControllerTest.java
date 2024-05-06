@@ -1,10 +1,8 @@
 package com.hugo.hugodemomall.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hugo.hugodemomall.constant.ProductCategory;
 import com.hugo.hugodemomall.dto.BuyItem;
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
-import com.hugo.hugodemomall.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -57,7 +55,7 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/add/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -66,7 +64,7 @@ class OrderControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
                 .andExpect(jsonPath("$.orderId", notNullValue()))
-                .andExpect(jsonPath("$.userId", equalTo(1)))
+                .andExpect(jsonPath("$.memberId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
                 .andExpect(jsonPath("$.orderItemList", hasSize(2)))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
@@ -84,7 +82,7 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/add/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -111,7 +109,7 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/add/orders", 100)
+                .post("/members/{memberId}/add/orders", 100)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -138,7 +136,7 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/add/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -165,7 +163,7 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/add/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -179,7 +177,7 @@ class OrderControllerTest {
     @Test
     public void getOrders() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1)
+                .get("/members/{memberId}/orders", 1)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 
@@ -190,13 +188,13 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)))
                 .andExpect(jsonPath("$.results[0].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[0].userId", equalTo(1)))
+                .andExpect(jsonPath("$.results[0].memberId", equalTo(1)))
                 .andExpect(jsonPath("$.results[0].totalAmount", equalTo(100000)))
                 .andExpect(jsonPath("$.results[0].orderItemList", hasSize(1)))
                 .andExpect(jsonPath("$.results[0].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[1].userId", equalTo(1)))
+                .andExpect(jsonPath("$.results[1].memberId", equalTo(1)))
                 .andExpect(jsonPath("$.results[1].totalAmount", equalTo(500690)))
                 .andExpect(jsonPath("$.results[1].orderItemList", hasSize(3)))
                 .andExpect(jsonPath("$.results[1].createdDate", notNullValue()))
@@ -207,7 +205,7 @@ class OrderControllerTest {
     @Test
     public void getOrders_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1)
+                .get("/members/{memberId}/orders", 1)
                 .param("limit", "2")
                 .param("offset", "2")
                 .with(httpBasic("user1@gmail.com","user1"))
@@ -225,7 +223,7 @@ class OrderControllerTest {
     @Test
     public void getOrders_userHasNoOrder() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 2)
+                .get("/members/{memberId}/orders", 2)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 
@@ -241,7 +239,7 @@ class OrderControllerTest {
     @Test
     public void getOrders_userNotExist() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 100)
+                .get("/members/{userId}/orders", 100)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 
@@ -260,7 +258,7 @@ class OrderControllerTest {
     public void deleteOrders_success() throws Exception{
         // 測試刪除
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/users/orders/{orderId}",2)
+                .delete("/members/orders/{orderId}",2)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 
@@ -274,7 +272,7 @@ class OrderControllerTest {
     public void deleteOrders_orderIdNotExist() throws Exception{
         // 測試刪除不存在的訂單
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/users/orders/{orderId}",100)
+                .delete("/members/orders/{orderId}",100)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 
@@ -298,7 +296,7 @@ class OrderControllerTest {
 
         // 測試刪除
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/users/orders/{orderId}",2)
+                .delete("/members/orders/{orderId}",2)
                 .with(httpBasic("user1@gmail.com","user1"))
                 .with(csrf());
 

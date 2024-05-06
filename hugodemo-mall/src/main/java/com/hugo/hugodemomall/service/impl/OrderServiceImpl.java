@@ -27,8 +27,6 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private ProductDao productDao;
-//    @Autowired
-//    private UserDao userDao;
     @Autowired
     private RoleDao roleDao;
     @Autowired
@@ -69,14 +67,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
+    public Integer createOrder(Integer memberId, CreateOrderRequest createOrderRequest) {
 
 
         // 檢查user 是否存在
-        Member member = memberDao.getMemberById(userId);
+        Member member = memberDao.getMemberById(memberId);
 
         if(member ==null){
-            log.warn("不存在的 {} userId",userId);
+            log.warn("不存在的 {} memberId",memberId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
@@ -110,22 +108,22 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 創建訂單
-        Integer orderId = orderDao.createOrder(userId,totalAmount);
+        Integer orderId = orderDao.createOrder(memberId,totalAmount);
 
         orderDao.createrOrderItems(orderId,orderItemList);
 
         // 檢查訂單總金額有沒有超過升級VIP的金額(一萬)
-        Integer priceTotal = orderDao.getOrderByTotalPrice(userId);
+        Integer priceTotal = orderDao.getOrderByTotalPrice(memberId);
 
         // 查詢VIP role權限ID
         Role normalRole = roleDao.getRoleByName("ROLE_VIP_MEMBER");
 
         // 查詢會員是否已經有VIP資格
-        MemberHasRole memberHasRole = memberDao.getMemberHasRoleByMemberId(userId,normalRole.getRoleId());
+        MemberHasRole memberHasRole = memberDao.getMemberHasRoleByMemberId(memberId,normalRole.getRoleId());
 
         // 滿足金額和目前VIP的話添加VIP權限
         if(priceTotal>=vipUpgradePrice && memberHasRole ==null){
-            memberDao.addRoleForMemberId(userId,normalRole);
+            memberDao.addRoleForMemberId(memberId,normalRole);
         }
 
         return orderId;

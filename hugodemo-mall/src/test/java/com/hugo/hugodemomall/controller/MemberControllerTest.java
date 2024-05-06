@@ -3,10 +3,8 @@ package com.hugo.hugodemomall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hugo.hugodemomall.constant.ProductCategory;
 import com.hugo.hugodemomall.dao.MemberDao;
-import com.hugo.hugodemomall.dto.MemberLoginRequest;
 import com.hugo.hugodemomall.dto.MemberRegisterRequest;
 import com.hugo.hugodemomall.dto.ProductRequest;
-import com.hugo.hugodemomall.dto.UserRegisterRequest;
 import com.hugo.hugodemomall.model.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,11 +72,11 @@ class MemberControllerTest {
     // 註冊一個信箱亂填的
     @Test
     public void register_invalidEmailFormat() throws Exception {
-        UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
-        userRegisterRequest.setEmail("3gd8e7q34l9");
-        userRegisterRequest.setPassword("123");
+        MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
+        memberRegisterRequest.setEmail("3gd8e7q34l9");
+        memberRegisterRequest.setPassword("123");
 
-        String json = objectMapper.writeValueAsString(userRegisterRequest);
+        String json = objectMapper.writeValueAsString(memberRegisterRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/members/register")

@@ -43,7 +43,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getOrders(OrderQueryParams orderQueryParams) {
         String sql = """
-                SELECT order_id ,user_id ,total_amount ,created_date,last_modified_date
+                SELECT order_id ,member_id ,total_amount ,created_date,last_modified_date
                 FROM `order`
                 WHERE 1=1
                 """;
@@ -68,7 +68,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order getOrderById(Integer orderId) {
         String sql = """
-                    SELECT order_id,user_id,total_amount,created_date,last_modified_date
+                    SELECT order_id,member_id,total_amount,created_date,last_modified_date
                     FROM `order`
                     WHERE order_id = :orderId
                 """;
@@ -86,14 +86,14 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Integer getOrderByTotalPrice(Integer userId) {
+    public Integer getOrderByTotalPrice(Integer memberId) {
         String sql = """
                 SELECT Sum(total_amount)
                 FROM `order`
-                WHERE user_id = :userId
+                WHERE member_id = :memberId
                 """;
         Map<String,Object> map = new HashMap<>();
-        map.put("userId",userId);
+        map.put("memberId",memberId);
 
         Integer priceTotal = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
@@ -121,13 +121,13 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Integer createOrder(Integer userId, Integer totalAmount) {
+    public Integer createOrder(Integer memberId, Integer totalAmount) {
         String sql = """
-                    INSERT INTO `order`(user_id,total_amount,created_date,last_modified_date)
-                    VALUES(:userId,:totalAmount,:createdDate,:lastModifiedDate)
+                    INSERT INTO `order`(member_id,total_amount,created_date,last_modified_date)
+                    VALUES(:memberId,:totalAmount,:createdDate,:lastModifiedDate)
                 """;
         Map<String, Object> map = new HashMap<>();
-        map.put("userId", userId);
+        map.put("memberId", memberId);
         map.put("totalAmount", totalAmount);
 
         Date now = new Date();
@@ -208,9 +208,9 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     private String addFilteringSql(String sql, Map<String,Object> map, OrderQueryParams orderQueryParams){
-        if(orderQueryParams.getUserId() != null){
-            sql += " AND user_id =:userId";
-            map.put("userId",orderQueryParams.getUserId());
+        if(orderQueryParams.getMemberId() != null){
+            sql += " AND member_id =:memberId";
+            map.put("memberId",orderQueryParams.getMemberId());
         }
 
         return sql;
