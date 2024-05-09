@@ -20,9 +20,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -178,6 +177,112 @@ class MemberControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(401));
     }
+    @Transactional
+    @Test
+    public void loginUpdatePd_success() throws Exception{
+        LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
+        loginUpdatePd.setEmail("user1@gmail.com");
+        loginUpdatePd.setNewPassword("1234");
+        String json = objectMapper.writeValueAsString(loginUpdatePd);
+        // 修改密碼
+        RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
+                .put("/members/loginUpdatePd")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(updatePdRequestBuilder)
+                .andExpect(status().is(200))
+                .andExpect(content().string(containsString("已更新使用者密碼")));
+
+        // 在執行登入看看
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/members/login")
+                .with(httpBasic("user1@gmail.com", "1234"));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(200));
+
+    }
+
+    @Transactional
+    @Test
+    public void loginUpdatePd_emailNotExist() throws Exception{
+        LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
+        loginUpdatePd.setEmail("user11@gmail.com");
+        loginUpdatePd.setNewPassword("1234");
+        String json = objectMapper.writeValueAsString(loginUpdatePd);
+        // 修改密碼
+        RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
+                .put("/members/loginUpdatePd")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(updatePdRequestBuilder)
+                .andExpect(status().is(404));
+    }
+
+    @Transactional
+    @Test
+    public void loginUpdatePd_NotMyself() throws Exception{
+        LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
+        loginUpdatePd.setEmail("admin@gmail.com");
+        loginUpdatePd.setNewPassword("1234");
+        String json = objectMapper.writeValueAsString(loginUpdatePd);
+        // 修改密碼
+        RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
+                .put("/members/loginUpdatePd")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(csrf());
+
+        mockMvc.perform(updatePdRequestBuilder)
+                .andExpect(status().is(401))
+                .andExpect(content().string(containsString("沒辦法修改其他使用者的密码")));
+    }
+    @Transactional
+    @Test
+    public void forgetPassword_success() throws Exception{
+        // 先註冊新帳號
+        MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
+        memberRegisterRequest.setEmail("excel0617@gmail.com");
+        memberRegisterRequest.setPassword("123");
+
+        register(memberRegisterRequest);
+
+        ForgetPasswordRequest forgetPasswordRequest = new ForgetPasswordRequest();
+        forgetPasswordRequest.setEmail("excel0617@gmail.com");
+
+        String json = objectMapper.writeValueAsString(forgetPasswordRequest);
+        // 寄出密碼
+        RequestBuilder RequestBuilder = MockMvcRequestBuilders
+                .post("/members/forgetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+        mockMvc.perform(RequestBuilder)
+                .andExpect(status().is(200))
+                .andExpect(content().string(containsString("已往使用者電子信箱寄送臨時密碼")));
+    }
+
+
+    @Test
+    public void forgetPassword_emailNotExist() throws Exception{
+        ForgetPasswordRequest forgetPasswordRequest = new ForgetPasswordRequest();
+        forgetPasswordRequest.setEmail("excel0617@gmail.com");
+
+        String json = objectMapper.writeValueAsString(forgetPasswordRequest);
+        // 寄出密碼
+        RequestBuilder RequestBuilder = MockMvcRequestBuilders
+                .post("/members/forgetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+        mockMvc.perform(RequestBuilder)
+                .andExpect(status().is(404));
+    }
 
     // 申請商戶
     @Test
@@ -189,7 +294,7 @@ class MemberControllerTest {
         String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant")
+                .post("/members/createMerchant")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(memberJson)
                 .with(httpBasic("admin@gmail.com", "admin"))
@@ -241,7 +346,7 @@ class MemberControllerTest {
         String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant")
+                .post("/members/createMerchant")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(memberJson)
                 .with(httpBasic("user1@gmail.com", "user1"))
@@ -262,7 +367,7 @@ class MemberControllerTest {
         String memberJson = objectMapper.writeValueAsString(createMerchantRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/members/createmerchant")
+                .post("/members/createMerchant")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(memberJson)
                 .with(httpBasic("admin@gmail.com", "admin"))
@@ -343,6 +448,10 @@ class MemberControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(404));
     }
+
+
+
+
 
     private void register(MemberRegisterRequest memberRegisterRequest) throws Exception {
         String json = objectMapper.writeValueAsString(memberRegisterRequest);
