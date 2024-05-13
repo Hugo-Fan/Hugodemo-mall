@@ -10,7 +10,7 @@ INSERT INTO product (product_name, category, image_url, price, stock, descriptio
 --  member
 INSERT INTO member (email, password, created_date, last_modified_date) VALUES ('user1@gmail.com', '$2a$10$2mXHz/hHeb463WUVIwmkBO5jYhOx9RgNcXn0E201lLJ7XoYez2vkO', '2022-06-30 10:30:00', '2022-06-30 10:30:00');
 INSERT INTO member (email, password, created_date, last_modified_date) VALUES ('admin@gmail.com', '$2a$10$FJghG.WJ05cjow7q4HOww.3QGDAkAqedtXAWOdvkfTH3X52/W6.Qy', '2022-06-30 10:40:00', '2022-06-30 10:40:00');
-
+INSERT INTO member (email, password, created_date, last_modified_date) VALUES ('user2@gmail.com', '$2a$10$CpIjmG1FzWCtAi1AXGQ6SeJ9XaQO2X9uy70B0FQ9yzeOSxGdAbCIC', '2022-06-30 10:30:00', '2022-06-30 10:30:00');
 -- role
 INSERT INTO role(role_name) VALUES ('ROLE_ADMIN');
 INSERT INTO role(role_name) VALUES ('ROLE_MALL_MANAGER');

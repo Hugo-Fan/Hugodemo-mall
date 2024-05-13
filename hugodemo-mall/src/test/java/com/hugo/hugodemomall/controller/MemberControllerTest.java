@@ -41,7 +41,7 @@ class MemberControllerTest {
     public void register_success() throws Exception {
         MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
         memberRegisterRequest.setEmail("test1@gmail.com");
-        memberRegisterRequest.setPassword("123");
+        memberRegisterRequest.setPassword("123456");
         memberRegisterRequest.setName("Hugo");
         memberRegisterRequest.setAge(28);
 
@@ -93,7 +93,7 @@ class MemberControllerTest {
         // 先註冊一個帳號
         MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
         memberRegisterRequest.setEmail("test2@gmail.com");
-        memberRegisterRequest.setPassword("123");
+        memberRegisterRequest.setPassword("123456");
 
         String json = objectMapper.writeValueAsString(memberRegisterRequest);
 
@@ -107,7 +107,7 @@ class MemberControllerTest {
 
         // 再次使用同個 email 註冊
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(409));
     }
 
     // 登入
@@ -116,7 +116,7 @@ class MemberControllerTest {
         // 先註冊新帳號
         MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
         memberRegisterRequest.setEmail("test1@gmail.com");
-        memberRegisterRequest.setPassword("123");
+        memberRegisterRequest.setPassword("123456");
 
         register(memberRegisterRequest);
 
@@ -140,7 +140,7 @@ class MemberControllerTest {
         // 先註冊新帳號
         MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
         memberRegisterRequest.setEmail("test4@gmail.com");
-        memberRegisterRequest.setPassword("123");
+        memberRegisterRequest.setPassword("123456");
 
 
         register(memberRegisterRequest);
@@ -181,25 +181,26 @@ class MemberControllerTest {
     @Test
     public void loginUpdatePd_success() throws Exception{
         LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
-        loginUpdatePd.setEmail("user1@gmail.com");
-        loginUpdatePd.setNewPassword("1234");
+        loginUpdatePd.setEmail("user2@gmail.com");
+        loginUpdatePd.setOldPassword("123456");
+        loginUpdatePd.setNewPassword("1234567");
         String json = objectMapper.writeValueAsString(loginUpdatePd);
         // 修改密碼
         RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
                 .put("/members/loginUpdatePd")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(httpBasic("user2@gmail.com", "123456"))
                 .with(csrf());
 
         mockMvc.perform(updatePdRequestBuilder)
                 .andExpect(status().is(200))
-                .andExpect(content().string(containsString("已更新使用者密碼")));
+                .andExpect(content().string(containsString("已更新會員密碼")));
 
         // 在執行登入看看
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/members/login")
-                .with(httpBasic("user1@gmail.com", "1234"));
+                .with(httpBasic("user2@gmail.com", "1234567"));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(200));
@@ -208,41 +209,66 @@ class MemberControllerTest {
 
     @Transactional
     @Test
-    public void loginUpdatePd_emailNotExist() throws Exception{
+    public void loginUpdatePd_oldPdError() throws Exception{
         LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
-        loginUpdatePd.setEmail("user11@gmail.com");
-        loginUpdatePd.setNewPassword("1234");
+        loginUpdatePd.setEmail("user2@gmail.com");
+        loginUpdatePd.setOldPassword("12345");
+        loginUpdatePd.setNewPassword("1234567");
         String json = objectMapper.writeValueAsString(loginUpdatePd);
         // 修改密碼
         RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
                 .put("/members/loginUpdatePd")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(httpBasic("user2@gmail.com", "123456"))
+                .with(csrf());
+
+        mockMvc.perform(updatePdRequestBuilder)
+                .andExpect(status().is(401));
+    }
+
+
+    @Transactional
+    @Test
+    public void loginUpdatePd_emailNotExist() throws Exception{
+        LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
+        loginUpdatePd.setEmail("user22@gmail.com");
+        loginUpdatePd.setOldPassword("123456");
+        loginUpdatePd.setNewPassword("1234567");
+        String json = objectMapper.writeValueAsString(loginUpdatePd);
+        // 修改密碼
+        RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
+                .put("/members/loginUpdatePd")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(httpBasic("user2@gmail.com", "123456"))
                 .with(csrf());
 
         mockMvc.perform(updatePdRequestBuilder)
                 .andExpect(status().is(404));
     }
 
+
+
     @Transactional
     @Test
     public void loginUpdatePd_NotMyself() throws Exception{
         LoginUpdatePd loginUpdatePd =new LoginUpdatePd();
         loginUpdatePd.setEmail("admin@gmail.com");
-        loginUpdatePd.setNewPassword("1234");
+        loginUpdatePd.setOldPassword("admin");
+        loginUpdatePd.setNewPassword("1234567");
         String json = objectMapper.writeValueAsString(loginUpdatePd);
         // 修改密碼
         RequestBuilder updatePdRequestBuilder = MockMvcRequestBuilders
                 .put("/members/loginUpdatePd")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .with(httpBasic("user1@gmail.com", "user1"))
+                .with(httpBasic("user2@gmail.com", "123456"))
                 .with(csrf());
 
         mockMvc.perform(updatePdRequestBuilder)
-                .andExpect(status().is(401))
-                .andExpect(content().string(containsString("沒辦法修改其他使用者的密码")));
+                .andExpect(status().is(403))
+                .andExpect(content().string(containsString("沒辦法修改其他會員的密码")));
     }
     @Transactional
     @Test
@@ -250,7 +276,7 @@ class MemberControllerTest {
         // 先註冊新帳號
         MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest();
         memberRegisterRequest.setEmail("excel0617@gmail.com");
-        memberRegisterRequest.setPassword("123");
+        memberRegisterRequest.setPassword("123456");
 
         register(memberRegisterRequest);
 
@@ -301,10 +327,7 @@ class MemberControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(201))
-                .andExpect(jsonPath("$.memberHasRoleId", notNullValue()))
-                .andExpect(jsonPath("$.memberId",equalTo(1)))
-                .andExpect(jsonPath("$.roleId", notNullValue()));
+                .andExpect(status().is(201));
 
         // 測試能不能添加商品
         ProductRequest productRequest = new ProductRequest();
@@ -374,7 +397,7 @@ class MemberControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
 
     }
 

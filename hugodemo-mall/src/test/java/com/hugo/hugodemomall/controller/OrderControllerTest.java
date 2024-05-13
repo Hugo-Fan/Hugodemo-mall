@@ -116,7 +116,7 @@ class OrderControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     // 不存在的商品
@@ -143,7 +143,7 @@ class OrderControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     // 商品庫存不足
@@ -170,7 +170,7 @@ class OrderControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     // 查詢訂單列表
@@ -277,7 +277,7 @@ class OrderControllerTest {
                 .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     // 刪除訂單_商品被誤刪除
