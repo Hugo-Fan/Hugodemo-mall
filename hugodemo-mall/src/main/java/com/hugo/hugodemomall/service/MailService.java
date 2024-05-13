@@ -11,7 +11,6 @@ import java.util.concurrent.Executor;
 
 @Service
 public class MailService {
-
     @Autowired
     private JavaMailSender mailSender;
     @Autowired

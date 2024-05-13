@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class MemberRegisterRequest {
+
     @Schema(description = "註冊會員使用", example = "123456@gmail.com")
     @NotBlank
     @Email

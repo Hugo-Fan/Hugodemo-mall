@@ -13,5 +13,6 @@ public class RoleRowMapper implements RowMapper<Role> {
         role.setRoleId(rs.getInt("role_id"));
         role.setRoleName(rs.getString("role_name"));
         return role;
+
     }
 }

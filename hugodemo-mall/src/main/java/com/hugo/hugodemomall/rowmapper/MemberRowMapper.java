@@ -18,7 +18,6 @@ public class MemberRowMapper implements RowMapper<Member> {
         member.setAge(rs.getInt("age"));
         member.setCreated_date(rs.getTimestamp("created_date"));
         member.setLast_modified_date(rs.getTimestamp("last_modified_date"));
-
         return member;
     }
 }

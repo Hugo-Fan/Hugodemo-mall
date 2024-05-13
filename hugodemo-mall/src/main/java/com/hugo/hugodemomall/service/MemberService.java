@@ -9,7 +9,6 @@ import com.hugo.hugodemomall.model.Role;
 import java.util.List;
 
 public interface MemberService {
-
     Member getMemberById(Integer memberId);
     Integer register(MemberRegisterRequest memberRegisterRequest);
 

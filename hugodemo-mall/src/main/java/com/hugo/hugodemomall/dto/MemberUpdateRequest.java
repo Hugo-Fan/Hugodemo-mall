@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class MemberUpdateRequest {
+
     @Schema(description = "會員Email，比對身份用", example = "123456@gmail.com")
     @Email
     @NotBlank

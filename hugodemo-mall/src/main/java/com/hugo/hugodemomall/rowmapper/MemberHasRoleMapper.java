@@ -14,5 +14,6 @@ public class MemberHasRoleMapper implements RowMapper<MemberHasRole> {
         memberHasRole.setMemberId(rs.getInt("member_id"));
         memberHasRole.setRoleId(rs.getInt("role_id"));
         return memberHasRole;
+
     }
 }

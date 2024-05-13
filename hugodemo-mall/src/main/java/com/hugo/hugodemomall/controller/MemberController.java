@@ -28,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
     @Autowired
     private MailService mailService;
 

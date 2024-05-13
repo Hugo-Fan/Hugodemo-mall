@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class LoginUpdatePd {
+
         @Schema(description = "比對是不是會員本人使用", example = "123456@gmail.com")
         @NotBlank
         @Email

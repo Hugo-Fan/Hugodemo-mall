@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class MemberLoginRequest {
+
     @NotBlank
     @Email
     private String email;

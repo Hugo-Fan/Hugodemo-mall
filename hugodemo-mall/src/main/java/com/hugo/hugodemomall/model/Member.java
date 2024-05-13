@@ -8,6 +8,7 @@ import lombok.Data;
 import java.util.Date;
 @Data
 public class Member {
+
     @Schema(description = "會員ID", example = "1")
     private Integer memberId;
     @Schema(description = "會員Email", example = "123456@gmail.com")

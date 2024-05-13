@@ -24,7 +24,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private MemberDao memberDao;
-
     private final static Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override

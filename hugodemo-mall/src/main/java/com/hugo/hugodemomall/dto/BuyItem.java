@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class BuyItem {
+
     @Schema(description = "商品ID", example = "1")
     @NotNull
     private Integer productId;

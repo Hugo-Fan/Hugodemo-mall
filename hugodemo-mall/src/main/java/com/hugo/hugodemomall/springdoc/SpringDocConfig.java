@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition
 @Configuration
 public class SpringDocConfig {
+
     @Bean
     public OpenAPI baseOpenAPI() {
         return new OpenAPI()

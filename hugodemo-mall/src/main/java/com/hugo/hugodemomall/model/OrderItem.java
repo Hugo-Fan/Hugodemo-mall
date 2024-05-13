@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class OrderItem {
+
     @Schema(description = "訂單詳細商品清單ID", example = "1")
     private Integer orderItemId;
     @Schema(description = "訂單ID", example = "1")

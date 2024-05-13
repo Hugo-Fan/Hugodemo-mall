@@ -22,7 +22,6 @@ public class FilterUserLogin extends OncePerRequestFilter {
 
             log.info("使用者 {} 於 " + now + " 嘗試從 " + host +" 登入",userAgent);
         }
-
         // request 和 response 繼續往下傳遞
         filterChain.doFilter(request,response);
     }

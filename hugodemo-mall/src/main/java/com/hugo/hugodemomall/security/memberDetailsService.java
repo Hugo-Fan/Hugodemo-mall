@@ -41,7 +41,6 @@ public class memberDetailsService implements UserDetailsService {
             return new User(memberEmail,memberPd,authorityList);
         }
     }
-
     private List<GrantedAuthority> convertTOAuthorities(List<Role> roleList){
         List<GrantedAuthority> authorities = new ArrayList<>();
 

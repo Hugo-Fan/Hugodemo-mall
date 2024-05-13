@@ -11,7 +11,6 @@ import com.hugo.hugodemomall.model.Role;
 import java.util.List;
 
 public interface MemberDao {
-
     Member getMemberById(Integer memberId);
 
     Member getMemberByEmail(String email);

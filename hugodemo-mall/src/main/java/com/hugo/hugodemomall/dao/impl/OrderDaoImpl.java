@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Component
 public class OrderDaoImpl implements OrderDao {
+
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

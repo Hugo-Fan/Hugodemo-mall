@@ -26,6 +26,7 @@ import java.util.Map;
 
 @Component
 public class MemberDaoImpl implements MemberDao {
+
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
