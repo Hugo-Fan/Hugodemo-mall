@@ -7,7 +7,6 @@ import com.hugo.hugodemomall.model.Order;
 import java.util.List;
 
 public interface OrderService {
-
     Integer countOrder(OrderQueryParams orderQueryParams);
 
     List<Order> getOrders(OrderQueryParams orderQueryParams);

@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class Order {
+
     @Schema(description = "訂單ID", example = "1")
     private Integer orderId;
     @Schema(description = "會員ID", example = "1")

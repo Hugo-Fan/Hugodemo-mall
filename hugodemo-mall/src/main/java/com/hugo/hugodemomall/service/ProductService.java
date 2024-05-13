@@ -7,7 +7,6 @@ import com.hugo.hugodemomall.model.Product;
 import java.util.List;
 
 public interface ProductService {
-
     List<Product> getProducts(ProductQueryParams productQueryParams);
 
     Integer countProduct(ProductQueryParams productQueryParams);

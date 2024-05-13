@@ -7,6 +7,7 @@ import lombok.Data;
 import java.util.Date;
 @Data
 public class Product {
+
     @Schema(description = "商品ID", example = "1")
     private Integer productId;
     @Schema(description = "商品名稱", example = "蘋果")

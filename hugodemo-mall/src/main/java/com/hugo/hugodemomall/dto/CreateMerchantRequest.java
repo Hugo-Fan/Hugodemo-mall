@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class CreateMerchantRequest {
+
     @Schema(description = "會員ID", example = "1")
     @NotNull
     private Integer memberId;

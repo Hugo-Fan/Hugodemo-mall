@@ -19,6 +19,7 @@ import java.util.Map;
 
 @Component
 public class ProductDaoImpl implements ProductDao {
+
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class ProductRequest {
+
     @Schema(description = "商品名稱", example = "蘋果")
     @NotNull
     private String productName;

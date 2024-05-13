@@ -15,5 +15,6 @@ public class MemberTokenRoleMapper implements RowMapper<MemberToken> {
         memberToken.setToken(rs.getString("token"));
         memberToken.setCreated_date(rs.getTimestamp("created_date"));
         return memberToken;
+
     }
 }

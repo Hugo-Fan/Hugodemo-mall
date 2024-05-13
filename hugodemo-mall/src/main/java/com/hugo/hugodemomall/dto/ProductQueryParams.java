@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class ProductQueryParams {
+
     private ProductCategory category;
     private String search;
     private List<String> orderBy;
