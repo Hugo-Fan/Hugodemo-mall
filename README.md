@@ -1,8 +1,11 @@
 API文件請查看URL:http://35.206.245.128:8081/swagger-ui/index.html?url=/mall
 
 以下API不需要登入就能呼叫
+
 "/members/register"       註冊會員帳號
+
 "/members/login"          帳號登入
+
 "/members/forgetPassword" 忘記密碼
 
 有開啟CSRF保護除了Get呼叫，請先使用帳號登入API，取得XSRF-TOKEN
