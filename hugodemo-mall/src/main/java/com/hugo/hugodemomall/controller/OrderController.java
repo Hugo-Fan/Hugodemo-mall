@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @RestController
 @Validated
+@Tag(name = "Order", description = "會員商品訂單有關的Api")
 public class OrderController {
 
     @Autowired

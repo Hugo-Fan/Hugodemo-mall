@@ -63,7 +63,7 @@ public class SecurityConfig {
                 // 設定 api 的權限控制
                 .authorizeHttpRequests(request -> request
                                 // API文檔
-                                .requestMatchers("/mallApi").permitAll()
+                                .requestMatchers("/mall/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 // member
                                 .requestMatchers("/members/register").permitAll()
