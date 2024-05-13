@@ -1,10 +1,8 @@
 package com.hugo.hugodemomall.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hugo.hugodemomall.constant.ProductCategory;
 import com.hugo.hugodemomall.dto.BuyItem;
 import com.hugo.hugodemomall.dto.CreateOrderRequest;
-import com.hugo.hugodemomall.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,20 +55,23 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(json)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
                 .andExpect(jsonPath("$.orderId", notNullValue()))
-                .andExpect(jsonPath("$.userId", equalTo(1)))
+                .andExpect(jsonPath("$.memberId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
                 .andExpect(jsonPath("$.orderItemList", hasSize(2)))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
+    // 購物清單空的
     @Transactional
     @Test
     public void createOrder_illegalArgument_emptyBuyItemList() throws Exception {
@@ -79,14 +82,17 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(json)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(400));
     }
 
+    // 不存在的用戶
     @Transactional
     @Test
     public void createOrder_userNotExist() throws Exception {
@@ -103,14 +109,17 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 100)
+                .post("/members/{memberId}/add/orders", 100)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(json)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
+    // 不存在的商品
     @Transactional
     @Test
     public void createOrder_productNotExist() throws Exception {
@@ -127,14 +136,17 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(json)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
+    // 商品庫存不足
     @Transactional
     @Test
     public void createOrder_stockNotEnough() throws Exception {
@@ -151,19 +163,23 @@ class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/members/{memberId}/add/orders", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(json)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400));
+                .andExpect(status().is(404));
     }
 
     // 查詢訂單列表
     @Test
     public void getOrders() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1);
+                .get("/members/{memberId}/orders", 1)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -172,25 +188,28 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)))
                 .andExpect(jsonPath("$.results[0].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[0].userId", equalTo(1)))
+                .andExpect(jsonPath("$.results[0].memberId", equalTo(1)))
                 .andExpect(jsonPath("$.results[0].totalAmount", equalTo(100000)))
                 .andExpect(jsonPath("$.results[0].orderItemList", hasSize(1)))
                 .andExpect(jsonPath("$.results[0].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[1].userId", equalTo(1)))
+                .andExpect(jsonPath("$.results[1].memberId", equalTo(1)))
                 .andExpect(jsonPath("$.results[1].totalAmount", equalTo(500690)))
                 .andExpect(jsonPath("$.results[1].orderItemList", hasSize(3)))
                 .andExpect(jsonPath("$.results[1].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].lastModifiedDate", notNullValue()));
     }
 
+    // 添加分頁的收尋條件
     @Test
     public void getOrders_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1)
+                .get("/members/{memberId}/orders", 1)
                 .param("limit", "2")
-                .param("offset", "2");
+                .param("offset", "2")
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -200,10 +219,13 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
 
+    // 用戶沒有訂單但要正常回應
     @Test
     public void getOrders_userHasNoOrder() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 2);
+                .get("/members/{memberId}/orders", 2)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -213,10 +235,13 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
 
+    // 不存在的用戶
     @Test
     public void getOrders_userNotExist() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 100);
+                .get("/members/{userId}/orders", 100)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -226,4 +251,56 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
 
+
+    // 刪除訂單
+    @Transactional
+    @Test
+    public void deleteOrders_success() throws Exception{
+        // 測試刪除
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/members/orders/{orderId}",2)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(204));
+    }
+
+    // 刪除訂單_不存在的訂單
+    @Transactional
+    @Test
+    public void deleteOrders_orderIdNotExist() throws Exception{
+        // 測試刪除不存在的訂單
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/members/orders/{orderId}",100)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(404));
+    }
+
+    // 刪除訂單_商品被誤刪除
+    @Transactional
+    @Test
+    public void deleteOrders_productNotExist() throws Exception{
+        // 故意刪除一個商品
+        RequestBuilder deleteProduct = MockMvcRequestBuilders
+                .delete("/products/delete/{productId}", 7)
+                .with(httpBasic("admin@gmail.com","admin"))
+                .with(csrf());
+
+        mockMvc.perform(deleteProduct)
+                .andExpect(status().is(204));
+
+
+        // 測試刪除
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/members/orders/{orderId}",2)
+                .with(httpBasic("user1@gmail.com","user1"))
+                .with(csrf());
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(400));
+    }
 }

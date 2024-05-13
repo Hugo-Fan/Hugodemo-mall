@@ -24,19 +24,36 @@ CREATE TABLE IF NOT EXISTS product
 );
 
 
-CREATE TABLE IF NOT EXISTS `user`
+CREATE TABLE IF NOT EXISTS member
 (
-    user_id            INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    email              VARCHAR(256) NOT NULL UNIQUE,
+    member_id            INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    email              VARCHAR(256) NOT NULL UNIQUE ,
     password           VARCHAR(256) NOT NULL,
+    name               VARCHAR(256) ,
+    age                INT,
     created_date       TIMESTAMP    NOT NULL,
     last_modified_date TIMESTAMP    NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS role
+(
+    role_id   INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS member_has_role
+(
+    member_has_role_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    member_id          INT NOT NULL,
+    role_id            INT NOT NULL
+);
+
+
+
 CREATE TABLE IF NOT EXISTS `order`
 (
     order_id           INT       NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_id            INT       NOT NULL,
+    member_id            INT       NOT NULL,
     total_amount       INT       NOT NULL,
     created_date       TIMESTAMP NOT NULL,
     last_modified_date TIMESTAMP NOT NULL

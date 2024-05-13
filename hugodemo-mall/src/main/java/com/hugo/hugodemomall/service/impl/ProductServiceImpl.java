@@ -1,12 +1,18 @@
 package com.hugo.hugodemomall.service.impl;
 
+import com.hugo.hugodemomall.dao.MemberDao;
 import com.hugo.hugodemomall.dao.ProductDao;
 import com.hugo.hugodemomall.dto.ProductQueryParams;
 import com.hugo.hugodemomall.dto.ProductRequest;
+import com.hugo.hugodemomall.model.Member;
 import com.hugo.hugodemomall.model.Product;
 import com.hugo.hugodemomall.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,6 +21,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private MemberDao memberDao;
+
+    private final static Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public Integer countProduct(ProductQueryParams productQueryParams) {
@@ -32,7 +43,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Integer createProduct(ProductRequest productRequest) {
+    public Integer createProduct(Integer memberId,ProductRequest productRequest) {
+
+        Member member = memberDao.getMemberById(memberId);
+
+        if(member ==null){
+            log.warn("不存在的 {} memberId",memberId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         return productDao.createProduct(productRequest);
     }
 

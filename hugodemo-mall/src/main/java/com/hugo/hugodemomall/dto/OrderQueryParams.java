@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class OrderQueryParams {
-    private Integer userId;
+    private Integer memberId;
     private Integer limit;
     private Integer offset;
 }
