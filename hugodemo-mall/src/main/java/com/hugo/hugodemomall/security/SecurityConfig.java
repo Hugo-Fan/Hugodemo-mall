@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(creatCsrfHandler())
-                        .ignoringRequestMatchers("/members/register", "/members/login","/members/forgetPassword","/members/forgetPdUpdatePd")
+                        .ignoringRequestMatchers("/members/register", "/members/login","/members/forgetPassword")
                 )
 
 //                .csrf(csrf ->csrf.disable())
@@ -68,7 +68,6 @@ public class SecurityConfig {
                                 // member
                                 .requestMatchers("/members/register").permitAll()
                                 .requestMatchers("/members/forgetPassword").permitAll()
-                                .requestMatchers("/members/forgetPdUpdatePd").permitAll()
                                 .requestMatchers("/members/login").authenticated()
                                 .requestMatchers("/members/loginUpdatePd").authenticated()
                                 .requestMatchers("/members/orders/**").authenticated()
