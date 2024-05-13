@@ -8,6 +8,8 @@ API文件請查看URL:http://35.206.245.128:8081/swagger-ui/index.html?url=/mall
 
 "/members/forgetPassword" 忘記密碼
 
+提供一組測試帳號 帳號:testMember@gmail.com 密碼:testMember
+
 有開啟CSRF保護除了Get呼叫，請先使用帳號登入API，取得XSRF-TOKEN
 ![圖片](https://github.com/Hugo-Fan/Hugodemo-mall/assets/163747982/8bcc5099-d3cc-4edd-9a12-5c2cc523cd86)
 
